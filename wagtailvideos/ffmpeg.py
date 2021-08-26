@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import tempfile
 
+from django.conf import settings
 from django.core.files.base import ContentFile
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ def get_thumbnail(file_path):
             subprocess.check_call([
                 'ffmpeg',
                 '-v', 'quiet',
-                '-itsoffset', '-4',
+                '-itsoffset', '-' + str(getattr(settings, 'WAGTAIL_VIDEOS_THUMBNAIL_OFFSET', 4)),
                 '-i', file_path,
                 '-vcodec', 'mjpeg',
                 '-vframes', '1',
