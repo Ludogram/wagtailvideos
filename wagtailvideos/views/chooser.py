@@ -4,10 +4,10 @@ import wagtail
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.utils.translation import gettext as _
 from wagtail.admin.forms.search import SearchForm
 from wagtail.admin.modal_workflow import render_modal_workflow
 from wagtail.core.models import Collection
-from wagtail.images.views.chooser import get_chooser_js_data
 from wagtail.search import index as search_index
 
 from wagtailvideos import get_video_model
@@ -22,6 +22,16 @@ else:
         PermissionPolicyChecker, popular_tags_for_model)
 
 permission_checker = PermissionPolicyChecker(permission_policy)
+
+
+def get_chooser_js_data():
+    """construct context variables needed by the chooser JS"""
+    return {
+        'step': 'chooser',
+        'error_label': _("Server Error"),
+        'error_message': _("Report this error to your webmaster with the following information:"),
+        'tag_autocomplete_url': reverse('wagtailadmin_tag_autocomplete'),
+    }
 
 
 def get_video_json(video):

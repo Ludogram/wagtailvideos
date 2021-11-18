@@ -2,7 +2,6 @@ from django.conf.urls import include, url
 from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from wagtail.admin.edit_handlers import InlinePanel
 from wagtail.admin.menu import Menu, MenuItem, SubmenuMenuItem
@@ -68,21 +67,17 @@ def register_video_permissions_panel():
 class VideoMenu(Menu):
     # Dummy class
     def __init__(self, *args, **kwargs):
-        pass
+        self.register_hook_name = None
+        self.construct_hook_name = None
+        self._registered_menu_items = None
 
-    def menu_items_for_request(self, request):
+    @property
+    def registered_menu_items(self):
         return [
             MenuItem(_('Manage videos'), reverse('wagtailvideos:index'),
                      name='videos', classnames='icon icon-media', order=100),
             TracksAdmin().get_menu_item(),
         ]
-
-    def render_html(self, request):
-        menu_items = self.menu_items_for_request(request)
-        rendered_menu_items = []
-        for item in sorted(menu_items, key=lambda i: i.order):
-            rendered_menu_items.append(item.render_html(request))
-        return mark_safe(''.join(rendered_menu_items))
 
 
 @hooks.register('register_admin_menu_item')
